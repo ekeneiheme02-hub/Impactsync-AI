@@ -200,6 +200,17 @@ Detects security and quality patterns in code.
 
 **Returns:** Object with pattern detection results
 
+## 🛠️ Development Modes
+
+ImpactSync AI supports multiple development modes for building and scaling:
+
+- **Plan Mode** → Architecture + System Design
+- **Code Mode** → Generate Backend/Frontend
+- **Advanced Mode** → Refine Prompts + Logic
+- **Orchestrator Mode** → Connect Flows
+
+See [DEVELOPMENT-MODES.md](./DEVELOPMENT-MODES.md) for detailed guides on using each mode.
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -209,6 +220,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for more details.
 
 ## 📄 License
 
