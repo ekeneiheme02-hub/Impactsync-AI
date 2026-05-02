@@ -6,10 +6,14 @@
 const express = require("express");
 const cors = require("cors");
 const acorn = require("acorn");
+const path = require("path");
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
+
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // -------------------- REQUIREMENT PARSER --------------------
 function extractRequirements(spec) {

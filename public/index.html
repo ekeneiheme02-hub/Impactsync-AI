@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImpactSync AI - Code Analysis Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .input-section, .output-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .analyze-btn:active {
+            transform: translateY(0);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result-box {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 400px;
+            max-height: 600px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .examples {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .example-btn {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 ImpactSync AI</h1>
+            <p>Requirement + Code Analysis Agent</p>
+            <div class="badges">
+                <span class="badge">DevOps</span>
+                <span class="badge">AI Reasoning</span>
+                <span class="badge">App Modernization</span>
+                <span class="badge">Security Analysis</span>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Analysis Points</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0-100</div>
+                <div class="stat-label">Compliance Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">70%+</div>
+                <div class="stat-label">Time Savings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">Real-time</div>
+                <div class="stat-label">Analysis Speed</div>
+            </div>
+        </div>
+
+        <div class="examples">
+            <strong>Quick Examples:</strong>
+            <button class="example-btn" onclick="loadExample1()">Insecure Login</button>
+            <button class="example-btn" onclick="loadExample2()">Missing Validation</button>
+            <button class="example-btn" onclick="loadExample3()">No Error Handling</button>
+            <button class="example-btn" onclick="clearAll()">Clear All</button>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <div>
+                    <div class="section-title">📋 Requirements Specification</div>
+                    <textarea id="spec" placeholder="Enter your requirements here (one per line)...
+
+Example:
+User must login securely
+System must validate all inputs
+Errors must be handled gracefully"></textarea>
+                </div>
+
+                <div>
+                    <div class="section-title">💻 Code to Analyze</div>
+                    <textarea id="code" placeholder="Enter your JavaScript code here...
+
+Example:
+async function login(username, password) {
+  console.log('Login attempt:', username, password);
+  return true;
+}"></textarea>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <div class="section-title">📊 Analysis Results</div>
+                <div id="result" class="result-box">
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <h3>👆 Enter requirements and code, then click Analyze</h3>
+                        <p style="margin-top: 10px;">Get instant security and quality analysis with production-ready improvements</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="analyze-btn" id="analyzeBtn" onclick="analyzeCode()">
+            🔍 Analyze Code
+        </button>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/analyze';
+
+        async function analyzeCode() {
+            const spec = document.getElementById('spec').value.trim();
+            const code = document.getElementById('code').value.trim();
+            const resultDiv = document.getElementById('result');
+            const btn = document.getElementById('analyzeBtn');
+
+            if (!spec || !code) {
+                alert('Please enter both requirements and code!');
+                return;
+            }
+
+            // Show loading
+            btn.disabled = true;
+            btn.textContent = '⏳ Analyzing...';
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Analyzing your code...</p></div>';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ spec, code })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.textContent = data.result;
+                } else {
+                    resultDiv.innerHTML = `<div style="color: red; padding: 20px;">
+                        <strong>Error:</strong> ${data.error || 'Analysis failed'}
+                    </div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div style="color: red; padding: 20px;">
+                    <strong>Connection Error:</strong><br>
+                    ${error.message}<br><br>
+                    <strong>Make sure the server is running:</strong><br>
+                    Run <code>npm run server</code> in the terminal
+                </div>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔍 Analyze Code';
+            }
+        }
+
+        function loadExample1() {
+            document.getElementById('spec').value = `User must login securely
+System must validate all inputs
+Errors must be handled gracefully`;
+
+            document.getElementById('code').value = `async function login(username, password) {
+  console.log("Login attempt:", username, password);
+  return true;
+}`;
+        }
+
+        function loadExample2() {
+            document.getElementById('spec').value = `API must validate user input
+System must prevent SQL injection
+Data must be sanitized`;
+
+            document.getElementById('code').value = `function getUserData(userId) {
+  const query = "SELECT * FROM users WHERE id = " + userId;
+  return database.execute(query);
+}`;
+        }
+
+        function loadExample3() {
+            document.getElementById('spec').value = `File operations must handle errors
+System must log failures
+Application must not crash`;
+
+            document.getElementById('code').value = `function readFile(path) {
+  const data = fs.readFileSync(path);
+  return data.toString();
+}`;
+        }
+
+        function clearAll() {
+            document.getElementById('spec').value = '';
+            document.getElementById('code').value = '';
+            document.getElementById('result').innerHTML = `<div style="text-align: center; padding: 40px; color: #999;">
+                <h3>👆 Enter requirements and code, then click Analyze</h3>
+                <p style="margin-top: 10px;">Get instant security and quality analysis with production-ready improvements</p>
+            </div>`;
+        }
+
+        // Allow Enter key to trigger analysis (Ctrl+Enter)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                analyzeCode();
+            }
+        });
+    </script>
+</body>
+</html>
