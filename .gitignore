@@ -39,4 +39,13 @@ temp/
 Thumbs.db
 .DS_Store
 
+# Documents (exclude PDFs and other binary files)
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.xls
+*.xlsx
+
 # Made with Bob
